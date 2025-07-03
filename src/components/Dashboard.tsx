@@ -13,7 +13,11 @@ import {
   Users
 } from "lucide-react";
 
-export const Dashboard = () => {
+interface DashboardProps {
+  empresaId: string;
+}
+
+export const Dashboard = ({ empresaId }: DashboardProps) => {
   const kpiData = [
     {
       title: "MTBF (Tempo Médio Entre Falhas)",

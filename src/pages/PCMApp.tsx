@@ -3,96 +3,90 @@ import { PCMHeader } from "@/components/PCMHeader";
 import { Navigation } from "@/components/Navigation";
 import { Dashboard } from "@/components/Dashboard";
 import { LoginForm } from "@/components/LoginForm";
+import { EquipmentModule } from "@/components/EquipmentModule";
+import { WorkOrderModule } from "@/components/WorkOrderModule";
+import { TechniciansModule } from "@/components/TechniciansModule";
+import { ReportsModule } from "@/components/ReportsModule";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export const PCMApp = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [userData, setUserData] = useState({
-    userName: "Gestor Principal",
-    companyName: "Empresa Demo"
-  });
+  const { user, company, loading, isAuthenticated, login, logout } = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (email: string, password: string) => {
-    // Simular login - aqui seria integrado com Firebase Auth
-    console.log("Login attempt:", { email, password });
-    
-    // Demo credentials
-    if (email === "gestor@empresa.com" && password === "123456") {
-      setIsLoggedIn(true);
-      setUserData({
-        userName: "João Silva",
-        companyName: "Indústria XYZ"
-      });
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      await login(email, password);
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao Sistema PCM",
       });
-    } else {
+    } catch (error: any) {
       toast({
         title: "Erro no login",
-        description: "E-mail ou senha incorretos",
+        description: error.message || "E-mail ou senha incorretos",
         variant: "destructive",
       });
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setActiveTab("dashboard");
-    toast({
-      title: "Logout realizado",
-      description: "Até logo!",
-    });
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <Dashboard />;
-      case "equipment":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Equipamentos</h2>
-            <p className="text-muted-foreground">Módulo de equipamentos em desenvolvimento...</p>
-          </div>
-        );
-      case "orders":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Ordens de Serviço</h2>
-            <p className="text-muted-foreground">Módulo de OS em desenvolvimento...</p>
-          </div>
-        );
-      case "technicians":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Técnicos</h2>
-            <p className="text-muted-foreground">Módulo de técnicos em desenvolvimento...</p>
-          </div>
-        );
-      case "reports":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Relatórios</h2>
-            <p className="text-muted-foreground">Módulo de relatórios em desenvolvimento...</p>
-          </div>
-        );
-      default:
-        return <Dashboard />;
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setActiveTab("dashboard");
+      toast({
+        title: "Logout realizado",
+        description: "Até logo!",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no logout",
+        description: "Não foi possível fazer logout",
+        variant: "destructive",
+      });
     }
   };
 
-  if (!isLoggedIn) {
+  const renderContent = () => {
+    if (!company) return null;
+    
+    switch (activeTab) {
+      case "dashboard":
+        return <Dashboard empresaId={company.id} />;
+      case "equipment":
+        return <EquipmentModule empresaId={company.id} />;
+      case "orders":
+        return <WorkOrderModule empresaId={company.id} />;
+      case "technicians":
+        return <TechniciansModule empresaId={company.id} />;
+      case "reports":
+        return <ReportsModule empresaId={company.id} />;
+      default:
+        return <Dashboard empresaId={company.id} />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
   return (
     <div className="min-h-screen bg-background">
       <PCMHeader 
-        userName={userData.userName}
-        companyName={userData.companyName}
+        userName={user?.displayName || user?.email || "Gestor"}
+        companyName={company?.nome || "Empresa"}
         onLogout={handleLogout}
       />
       <Navigation 
