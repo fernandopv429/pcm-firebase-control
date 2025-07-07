@@ -61,11 +61,18 @@ export const companyService = {
   },
 
   async create(companyData: Omit<Company, 'id' | 'createdAt'>): Promise<string> {
-    const docRef = await addDoc(collection(db, "empresas"), {
-      ...companyData,
-      createdAt: Timestamp.now()
-    });
-    return docRef.id;
+    console.log("Tentando criar empresa:", companyData);
+    try {
+      const docRef = await addDoc(collection(db, "empresas"), {
+        ...companyData,
+        createdAt: Timestamp.now()
+      });
+      console.log("Empresa criada com sucesso, ID:", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("Erro detalhado ao criar empresa:", error);
+      throw error;
+    }
   }
 };
 
