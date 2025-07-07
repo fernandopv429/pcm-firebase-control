@@ -3,7 +3,6 @@ import { PCMHeader } from "@/components/PCMHeader";
 import { Navigation } from "@/components/Navigation";
 import { Dashboard } from "@/components/Dashboard";
 import { LoginForm } from "@/components/LoginForm";
-import { CompanyRegistration } from "@/components/CompanyRegistration";
 import { EquipmentModule } from "@/components/EquipmentModule";
 import { WorkOrderModule } from "@/components/WorkOrderModule";
 import { TechniciansModule } from "@/components/TechniciansModule";
@@ -13,7 +12,6 @@ import { useAuth } from "@/hooks/useAuth";
 
 export const PCMApp = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [showRegistration, setShowRegistration] = useState(false);
   const { user, company, loading, isAuthenticated, login, logout } = useAuth();
   const { toast } = useToast();
 
@@ -81,21 +79,7 @@ export const PCMApp = () => {
   }
 
   if (!isAuthenticated) {
-    if (showRegistration) {
-      return (
-        <CompanyRegistration 
-          onBack={() => setShowRegistration(false)}
-          onSuccess={() => setShowRegistration(false)}
-        />
-      );
-    }
-    
-    return (
-      <LoginForm 
-        onLogin={handleLogin} 
-        onRegister={() => setShowRegistration(true)}
-      />
-    );
+    return <LoginForm onLogin={handleLogin} />;
   }
 
   return (
