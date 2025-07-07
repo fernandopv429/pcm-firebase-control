@@ -8,10 +8,11 @@ import pcmLogo from "@/assets/pcm-logo.png";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
+  onRegister: () => void;
   isLoading?: boolean;
 }
 
-export const LoginForm = ({ onLogin, isLoading = false }: LoginFormProps) => {
+export const LoginForm = ({ onLogin, onRegister, isLoading = false }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -80,8 +81,18 @@ export const LoginForm = ({ onLogin, isLoading = false }: LoginFormProps) => {
           </CardContent>
         </Card>
         
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground space-y-2">
           <p>Sistema multiempresa para gestão de manutenção</p>
+          <div className="pt-2">
+            <span>Não tem uma empresa cadastrada? </span>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-primary underline hover:no-underline"
+              onClick={onRegister}
+            >
+              Cadastre sua empresa
+            </Button>
+          </div>
         </div>
       </div>
     </div>
