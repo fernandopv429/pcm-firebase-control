@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building, ArrowLeft } from "lucide-react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { companyService } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 import pcmLogo from "@/assets/pcm-logo.png";
@@ -18,6 +20,7 @@ export const CompanyRegistration = ({ onBack, onSuccess }: CompanyRegistrationPr
   const [formData, setFormData] = useState({
     nome: "",
     emailGestor: "",
+    senha: "",
     plano: ""
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +46,17 @@ export const CompanyRegistration = ({ onBack, onSuccess }: CompanyRegistrationPr
         return;
       }
 
-      // Criar nova empresa
-      await companyService.create(formData);
+      // Primeiro criar o usuário no Firebase Auth
+      await createUserWithEmailAndPassword(auth, formData.emailGestor, formData.senha);
+      
+      // Depois criar a empresa no Firestore
+      const companyData = {
+        nome: formData.nome,
+        emailGestor: formData.emailGestor,
+        plano: formData.plano
+      };
+      
+      await companyService.create(companyData);
       
       toast({
         title: "Empresa cadastrada com sucesso!",
@@ -53,6 +65,7 @@ export const CompanyRegistration = ({ onBack, onSuccess }: CompanyRegistrationPr
 
       onSuccess();
     } catch (error: any) {
+      console.error("Erro no cadastro:", error);
       toast({
         title: "Erro no cadastro",
         description: error.message || "Não foi possível cadastrar a empresa",
@@ -110,6 +123,20 @@ export const CompanyRegistration = ({ onBack, onSuccess }: CompanyRegistrationPr
                   value={formData.emailGestor}
                   onChange={(e) => handleInputChange("emailGestor", e.target.value)}
                   required
+                  className="bg-background"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="senha">Senha de Acesso</Label>
+                <Input
+                  id="senha"
+                  type="password"
+                  placeholder="Digite uma senha segura"
+                  value={formData.senha}
+                  onChange={(e) => handleInputChange("senha", e.target.value)}
+                  required
+                  minLength={6}
                   className="bg-background"
                 />
               </div>
