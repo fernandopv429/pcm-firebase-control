@@ -3,15 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogIn } from "lucide-react";
+import { LogIn, Building2 } from "lucide-react";
 import pcmLogo from "@/assets/pcm-logo.png";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
+  onRegister: () => void;
   isLoading?: boolean;
 }
 
-export const LoginForm = ({ onLogin, isLoading = false }: LoginFormProps) => {
+export const LoginForm = ({ onLogin, onRegister, isLoading = false }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -77,6 +78,19 @@ export const LoginForm = ({ onLogin, isLoading = false }: LoginFormProps) => {
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
+
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <Button 
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={onRegister}
+                disabled={isLoading}
+              >
+                <Building2 className="h-4 w-4 mr-2" />
+                Cadastrar Nova Empresa
+              </Button>
+            </div>
           </CardContent>
         </Card>
         
