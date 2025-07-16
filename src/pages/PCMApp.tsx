@@ -8,6 +8,7 @@ import { EquipmentModule } from "@/components/EquipmentModule";
 import { WorkOrderModule } from "@/components/WorkOrderModule";
 import { TechniciansModule } from "@/components/TechniciansModule";
 import { ReportsModule } from "@/components/ReportsModule";
+import { NotificationSystem } from "@/components/NotificationSystem";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -113,6 +114,7 @@ export const PCMApp = () => {
       <main className="container mx-auto p-6">
         {renderContent()}
       </main>
+      <NotificationSystem empresaId={company?.id || ""} />
     </div>
   );
 };

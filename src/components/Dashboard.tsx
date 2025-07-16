@@ -1,4 +1,6 @@
 import { KPICard } from "./KPICard";
+import { QuickStats } from "./QuickStats";
+import { EquipmentHealthCheck } from "./EquipmentHealthCheck";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,12 +89,11 @@ export const Dashboard = ({ empresaId }: DashboardProps) => {
         </Button>
       </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiData.map((kpi, index) => (
-          <KPICard key={index} {...kpi} />
-        ))}
-      </div>
+      {/* Quick Stats */}
+      <QuickStats empresaId={empresaId} />
+
+      {/* Equipment Health Check */}
+      <EquipmentHealthCheck empresaId={empresaId} />
 
       {/* Recent Orders and Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
